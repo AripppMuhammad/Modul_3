@@ -1,70 +1,71 @@
 <?php
 
-namespace VehicleManagement;
+namespace RestaurantSystem;
 
-// Trait untuk menghitung efisiensi bahan bakar
-trait FuelEfficiency {
-    public function calculateEfficiency($distance, $fuel) {
-        return $distance / $fuel;
-    }
-}
+abstract class Menu {
+    protected $name;
+    protected $price;
 
-// Class abstrak untuk kendaraan
-abstract class Vehicle {
-    protected $brand;
-    protected $model;
-
-    public function __construct($brand, $model) {
-        $this->brand = $brand;
-        $this->model = $model;
+    public function __construct($name, $price) {
+        $this->name = $name;
+        $this->price = $price;
     }
 
-    abstract public function getDetails();
+    abstract public function getDescription();
 
     public function __toString() {
-        return "{$this->brand} - {$this->model}";
+        return "$this->name - Rp$this->price";
     }
 }
 
-// Class Car yang mewarisi class Vehicle
-class Car extends Vehicle {
-    private $numberOfDoors;
-
-    public function __construct($brand, $model, $numberOfDoors) {
-        parent::__construct($brand, $model);
-        $this->numberOfDoors = $numberOfDoors;
-    }
-
-    public function getDetails() {
-        return "Car: {$this->brand} {$this->model}, Doors: {$this->numberOfDoors}";
+trait OrderTrait {
+    public function placeOrder(Menu $menu) {
+        return "Pesanan Anda: " . $menu->getDescription() . " telah ditempatkan.";
     }
 }
 
-// Class Motorcycle yang mewarisi class Vehicle
-class Motorcycle extends Vehicle {
-    private $type;
-
-    public function __construct($brand, $model, $type) {
-        parent::__construct($brand, $model);
-        $this->type = $type;
-    }
-
-    public function getDetails() {
-        return "Motorcycle: {$this->brand} {$this->model}, Type: {$this->type}";
+class NasiPadang extends Menu {
+    public function getDescription() {
+        return $this->__toString() . " (Nasi Padang)";
     }
 }
 
-// Menggunakan class dan trait
-$car = new Car("Toyota", "Camry", 4);
-$motorcycle = new Motorcycle("Yamaha", "MT-09", "Sport");
+class Rendang extends Menu {
+    public function getDescription() {
+        return $this->__toString() . " (Rendang)";
+    }
+}
 
-// Menghitung efisiensi bahan bakar
-$distance = 300; // km
-$fuel = 15; // liter
-echo $car->getDetails() . "\n";
-echo "Fuel Efficiency: " . (new class { use FuelEfficiency; })->calculateEfficiency($distance, $fuel) . " km/l\n";
+class AyamGoreng extends Menu {
+    public function getDescription() {
+        return $this->__toString() . " (Ayam Goreng)";
+    }
+}
 
-echo $motorcycle->getDetails() . "\n";
-echo "Fuel Efficiency: " . (new class { use FuelEfficiency; })->calculateEfficiency($distance, $fuel) . " km/l\n";
+class Restaurant {
+    use OrderTrait;
+
+    public function showMenu() {
+        $menus = [
+            new NasiPadang("Nasi Padang", 15000),
+            new Rendang("Rendang", 25000),
+            new AyamGoreng("Ayam Goreng", 20000),
+        ];
+
+        foreach ($menus as $menu) {
+            echo $menu . "\n";
+        }
+    }
+}
+
+// Contoh penggunaan
+$restaurant = new Restaurant();
+
+echo "Menu Restoran Makanan Padang:\n";
+$restaurant->showMenu();
+
+$selectedMenu = new Rendang("Rendang", 25000);
+echo $restaurant->placeOrder($selectedMenu) . "\n";
 
 ?>
+
