@@ -1,0 +1,70 @@
+<?php
+
+namespace VehicleManagement;
+
+// Trait untuk menghitung efisiensi bahan bakar
+trait FuelEfficiency {
+    public function calculateEfficiency($distance, $fuel) {
+        return $distance / $fuel;
+    }
+}
+
+// Class abstrak untuk kendaraan
+abstract class Vehicle {
+    protected $brand;
+    protected $model;
+
+    public function __construct($brand, $model) {
+        $this->brand = $brand;
+        $this->model = $model;
+    }
+
+    abstract public function getDetails();
+
+    public function __toString() {
+        return "{$this->brand} - {$this->model}";
+    }
+}
+
+// Class Car yang mewarisi class Vehicle
+class Car extends Vehicle {
+    private $numberOfDoors;
+
+    public function __construct($brand, $model, $numberOfDoors) {
+        parent::__construct($brand, $model);
+        $this->numberOfDoors = $numberOfDoors;
+    }
+
+    public function getDetails() {
+        return "Car: {$this->brand} {$this->model}, Doors: {$this->numberOfDoors}";
+    }
+}
+
+// Class Motorcycle yang mewarisi class Vehicle
+class Motorcycle extends Vehicle {
+    private $type;
+
+    public function __construct($brand, $model, $type) {
+        parent::__construct($brand, $model);
+        $this->type = $type;
+    }
+
+    public function getDetails() {
+        return "Motorcycle: {$this->brand} {$this->model}, Type: {$this->type}";
+    }
+}
+
+// Menggunakan class dan trait
+$car = new Car("Toyota", "Camry", 4);
+$motorcycle = new Motorcycle("Yamaha", "MT-09", "Sport");
+
+// Menghitung efisiensi bahan bakar
+$distance = 300; // km
+$fuel = 15; // liter
+echo $car->getDetails() . "\n";
+echo "Fuel Efficiency: " . (new class { use FuelEfficiency; })->calculateEfficiency($distance, $fuel) . " km/l\n";
+
+echo $motorcycle->getDetails() . "\n";
+echo "Fuel Efficiency: " . (new class { use FuelEfficiency; })->calculateEfficiency($distance, $fuel) . " km/l\n";
+
+?>
